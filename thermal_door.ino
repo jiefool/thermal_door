@@ -10,6 +10,8 @@ int openDoor = 2;
 int closeDoor = 3;
 String doorStatus = "close";
 long actuatorDelay = 20000;
+int buzzer = 4;
+String doorState = "close";
 
 void setup(){
   lcd.init();
@@ -18,6 +20,7 @@ void setup(){
 
   pinMode(openDoor, OUTPUT);
   pinMode(closeDoor, OUTPUT);
+  pinMode(buzzer, OUTPUT);
 
   mlx.begin();
 
@@ -33,9 +36,15 @@ void loop(){
   if(temp > 32 && temp < 37){
     openDoorFunc();
     printToLCD(0,3, "Door Status: "+doorStatus+"  ");
+    alarmNotif();
   }else{
     closeDoorFunc(); 
     printToLCD(0,3, "Door Status: "+doorStatus+"  ");
+    alarmNotif();
+  }
+
+  if(temp > 37){
+    alarmSound();  
   }
   
   delay(100);
@@ -65,4 +74,17 @@ void closeDoorFunc(){
    digitalWrite(openDoor, HIGH);
    doorStatus = "close";
 }
-   
+
+void alarmSound(){
+    digitalWrite(buzzer, HIGH);
+    delay(200);
+    digitalWrite(buzzer, LOW);
+    delay(200);
+}
+
+void alarmNotif(){
+  if(doorState != doorStatus){
+    doorState = doorStatus;
+    alarmSound();  
+  }
+}
