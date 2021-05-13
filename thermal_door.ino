@@ -12,6 +12,12 @@ String doorStatus = "close";
 long actuatorDelay = 20000;
 int buzzer = 4;
 String doorState = "close";
+long cm = 0.0;
+long duration = 0.0;
+boolean hasObject = false;
+
+const int triggerPin = 24; // Trigger Pin of Ultrasonic Sensor
+const int echoPin = 22; // Echo Pin of Ultrasonic Sensor
 
 void setup(){
   lcd.init();
@@ -21,6 +27,8 @@ void setup(){
   pinMode(openDoor, OUTPUT);
   pinMode(closeDoor, OUTPUT);
   pinMode(buzzer, OUTPUT);
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 
   mlx.begin();
 
@@ -33,21 +41,31 @@ void loop(){
   temp = mlx.readObjectTempC();
   printToLCD(0,2, (String) temp + " C");
 
-  if(temp > 32 && temp < 37){
+  if(temp > 32 && temp < 37 && hasObject){
     openDoorFunc();
-    printToLCD(0,3, "Door Status: "+doorStatus+"  ");
+    printToLCD(0,3, "DStat: "+doorStatus+"  ");
     alarmNotif();
+    delay(20000);
   }else{
     closeDoorFunc(); 
-    printToLCD(0,3, "Door Status: "+doorStatus+"  ");
+    printToLCD(0,3, "DStat: "+doorStatus+"  ");
     alarmNotif();
   }
 
-  if(temp > 37){
+  if(temp > 37 && hasObject){
     alarmSound();  
   }
+
+  detectObjectDistance();
+  printToLCD(13,3, "CM:    ");
+  printToLCD(13,3, "CM: "+(String)cm + "  ");
+
+  if(cm > 20 and cm < 40){
+    hasObject = true;  
+  }else{
+    hasObject = false;
+  }
   
-  delay(100);
 }
 
 
@@ -55,7 +73,8 @@ void constantScreen(){
   printToLCD(0,0, "Thermal Door System");
   printToLCD(0,1, "Reading Temperature:");
   printToLCD(0,2, (String) temp + " C");
-  printToLCD(0,3, "Door Status: close");
+  printToLCD(0,3, "DStat: close");
+  printToLCD(13,3, "CM: "+(String)cm + "  ");
 }
 
 void printToLCD(int x, int y, String text){
@@ -88,3 +107,20 @@ void alarmNotif(){
     alarmSound();  
   }
 }
+
+
+long microsecondsToCentimeters(long microseconds) {
+   return microseconds / 29 / 2;
+}
+
+
+void detectObjectDistance(){
+   digitalWrite(triggerPin, LOW);
+   delayMicroseconds(2);
+   digitalWrite(triggerPin, HIGH);
+   delayMicroseconds(10);
+   digitalWrite(triggerPin, LOW);
+   duration = pulseIn(echoPin, HIGH);
+   cm = microsecondsToCentimeters(duration);
+}
+  
