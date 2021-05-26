@@ -43,12 +43,12 @@ void loop(){
 
   if(temp > 32 && temp < 37 && hasObject){
     openDoorFunc();
-    printToLCD(0,3, "DStat: "+doorStatus+"  ");
+    printToLCD(0,3, "Door Status: "+doorStatus+"  ");
     alarmNotif();
     delay(20000);
   }else{
     closeDoorFunc(); 
-    printToLCD(0,3, "DStat: "+doorStatus+"  ");
+    printToLCD(0,3, "Door Status: "+doorStatus+"  ");
     alarmNotif();
   }
 
@@ -57,10 +57,10 @@ void loop(){
   }
 
   detectObjectDistance();
-  printToLCD(13,3, "CM:    ");
-  printToLCD(13,3, "CM: "+(String)cm + "  ");
+  printToLCD(10,2, "CM:    ");
+  printToLCD(10,2, "CM: "+(String)cm + "  ");
 
-  if(cm > 20 and cm < 40){
+  if(cm < 40){
     hasObject = true;  
   }else{
     hasObject = false;
@@ -73,8 +73,8 @@ void constantScreen(){
   printToLCD(0,0, "Thermal Door System");
   printToLCD(0,1, "Reading Temperature:");
   printToLCD(0,2, (String) temp + " C");
-  printToLCD(0,3, "DStat: close");
-  printToLCD(13,3, "CM: "+(String)cm + "  ");
+  printToLCD(0,3, "Door Status: close");
+  printToLCD(10,2, "CM: "+(String)cm + "  ");
 }
 
 void printToLCD(int x, int y, String text){
