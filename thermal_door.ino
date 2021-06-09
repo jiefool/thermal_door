@@ -15,6 +15,7 @@ String doorState = "close";
 long cm = 0.0;
 long duration = 0.0;
 boolean hasObject = false;
+int tempCorrection = 2;
 
 const int triggerPin = 24; // Trigger Pin of Ultrasonic Sensor
 const int echoPin = 22; // Echo Pin of Ultrasonic Sensor
@@ -38,7 +39,7 @@ void setup(){
 }
 
 void loop(){
-  temp = mlx.readObjectTempC();
+  temp = mlx.readObjectTempC() + tempCorrection;
   printToLCD(0,2, (String) temp + " C");
 
   if(temp > 32 && temp < 37 && hasObject){
